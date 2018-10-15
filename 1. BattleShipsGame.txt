@@ -1,0 +1,57 @@
+
+public class BattleShipsGame {
+    public static void main(String[] args) {
+        System.out.println();
+        System.out.println("**** Welcome to the Battle Ships games ****");
+        System.out.println();
+        System.out.println("Right now, the sea is empty.");
+        System.out.println();
+        System.out.println("DEPLOY SHIPS");
+        System.out.println();
+
+        BattleShipsMap map1 = new BattleShipsMap(6,6);
+        map1.displayMap();
+
+        map1.UserPlacingShips();
+        map1.ComputerPlacingShips();
+
+        //both user and computer start with 5 ships. Game ends when one loses all 5.
+        //can further divide into subclass?
+        int userShips = 5;
+        int computerShips = 5;
+
+        while(userShips != 0 || computerShips != 0) {
+            map1.displayMap();
+            int u = map1.userAttack();
+            if (u == 1) {
+                computerShips--;
+            } else userShips += u;
+
+            System.out.println();
+            int c = map1.computerAttack();
+            if (c == -1) {
+                userShips--;
+            } else computerShips -= c;
+
+            System.out.println();
+            System.out.println("Your ships: " + userShips + " | Computer ships: " + computerShips);
+            System.out.println("--------------------------------------------");
+
+            if(userShips == 0){
+                System.out.println("********************************************");
+                System.out.println("Too bad... the computer won the Battle Ships game... What a shame...");
+                System.out.println("****** Your ships: " + userShips + " | Computer ships: " + computerShips + " ******");
+                System.out.println("********************************************");
+                System.exit(0);
+            } else if(computerShips == 0){
+                System.out.println();
+                System.out.println("********************************************");
+                System.out.println("******          YOU WIN !!!          ******");
+                System.out.println("****** Your ships: " + userShips + " | Computer ships: " + computerShips + " ******");
+                System.out.println("********************************************");
+                System.exit(0);
+            }
+        }
+    }
+}
+

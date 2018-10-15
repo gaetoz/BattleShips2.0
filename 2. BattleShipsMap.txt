@@ -1,0 +1,121 @@
+
+import java.util.Scanner;
+import java.util.Random;
+
+public class BattleShipsMap {
+    Tile map[][];
+    int rows;
+    int columns;
+
+    BattleShipsMap(int x, int y) {
+        this.rows = x;
+        this.columns = y;
+        this.map = new Tile[x][y];
+
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map.length; j++) {
+                // EmptyTile can be overriden by UserShip or ComputerShip
+                map[i][j] = new EmptyTile(i, j);
+            }
+        }
+    }
+    public void UserPlacingShips(){
+        Scanner input = new Scanner(System.in);
+
+        for (int i = 1; i < 6; i++) {
+            System.out.print("Enter X coordinate [0-5] for your ship " + i + ": ");
+            int x = input.nextInt();
+            System.out.print("Enter Y coordinate [0-5] for your ship " + i + ": ");
+            int y = input.nextInt();
+
+            if (x < 0 || y < 0 || x > rows || y > columns) {
+                System.out.println("You must play within the bounds of the map");
+                i--;
+                continue;
+            }
+            if(map[x][y] instanceof UserShip) {
+                System.out.println("You already have a ship on this position");
+                i--;
+            } else if (map[x][y] instanceof EmptyTile) {
+                map[x][y] = new UserShip(x, y);
+            }
+        }
+        System.out.println("User ships deployed.");
+        System.out.println();
+    }
+
+    public void ComputerPlacingShips() {
+        Random rand = new Random();
+
+        for (int k = 1; k < 6; k++) {
+            int x = rand.nextInt(rows);
+            int y = rand.nextInt(columns);
+            if (map[x][y] instanceof EmptyTile){
+                map[x][y] = new ComputerShip(x, y);
+            } else{
+                k--;
+            }
+        }
+        System.out.println("Robot ships deployed.");
+        System.out.println("----------------------------");
+        System.out.println();
+    }
+
+    void displayMap(){
+        System.out.println("   012345");
+        for(int i = 0; i < map.length; i++){
+            System.out.print( i + " |");
+
+            for(int j = 0; j < map.length; j++){
+                System.out.print(map[i][j]);
+            }
+            System.out.println("| " + i);
+        }
+        System.out.println("   012345");
+    }
+
+    public int userAttack() {
+        Scanner input = new Scanner(System.in);
+
+        System.out.println();
+        System.out.println("YOUR TURN");
+        System.out.print("Choose a coordinate X [0-5] to strike ship: ");
+        int x = input.nextInt();
+        System.out.print("Choose a coordinate Y [0-5] to strike ship: ");
+        int y = input.nextInt();
+
+        if (map[x][y] instanceof UserShip) {
+            map[x][y].userStrikeOwnShip();
+            return -1;
+        } else if (map[x][y] instanceof ComputerShip) {
+            map[x][y].userStrikeComputerShip();
+            return 1;
+        } else{
+            map[x][y].userStrikeWater();
+            return 0;
+        }
+    }
+
+    public int computerAttack() {
+        Random rand = new Random();
+
+        System.out.println("COMPUTER'S TURN");
+        int x = rand.nextInt(rows);
+        int y = rand.nextInt(columns);
+
+        if (map[x][y] instanceof UserShip) {
+            map[x][y].computerStrikeUserShip();
+            return -1;
+        } else if (map[x][y] instanceof ComputerShip) {
+            map[x][y].computerStrikeOwnShip();
+            return 1;
+        } else{
+            map[x][y].computerStrikeWater();
+            return 0;
+        }
+    }
+}
+
+
+
+
